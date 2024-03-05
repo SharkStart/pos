@@ -1,2 +1,7 @@
-node_modules
+node_modules/
 packaje-lock.json
+
+
+logs/
+.env
+.cors.js
