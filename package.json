@@ -21,5 +21,10 @@
     "rotating-file-stream": "^3.2.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.1"
   }
 }
