@@ -16,6 +16,9 @@ const orderSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    comments: {
+      type: String,
+    },
     table: {
       type: Number,
     },

@@ -4,10 +4,15 @@
 /* eslint-disable no-underscore-dangle */
 const Order = require('../models/order.model');
 
+const esRolValido = (rol) => {
+  const rolesPermitidos = ['mesero', 'admin', 'cocina'];
+  return rolesPermitidos.includes(rol);
+};
+
 const orderController = {
   createOrder: async (req, res) => {
     try {
-      if (req.user.rol !== 'mesero' && req.user.rol !== 'admin' && req.user.rol !== 'cocina') {
+      if (!esRolValido(req.user.rol)) {
         return res.status(403).json({ message: 'No tienes permiso para realizar esta acción' });
       }
       const { status, table, products } = req.body;
@@ -30,6 +35,22 @@ const orderController = {
         message: 'Orden creada exitosamente',
         order: newOrder,
       });
+    } catch (error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    }
+  },
+
+  getAllOrders: async (req, res) => {
+    try {
+      if (!esRolValido(req.user.rol)) {
+        return res.status(403).json({ message: 'No tienes permiso para realizar esta acción' });
+      }
+      const orders = await Order.find({ status: false })
+        .populate({ path: 'products', select: 'name description' })
+        .populate('user', 'name');
+      res.status(200).json(orders);
     } catch (error) {
       res.status(500).json({
         message: error.message,
