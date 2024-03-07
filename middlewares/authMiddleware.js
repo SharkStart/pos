@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 const bcrypt = require('bcryptjs');
 
 const encryptPass = async (req, res, next) => {
@@ -12,12 +13,8 @@ const encryptPass = async (req, res, next) => {
   }
 };
 
-async function comparePass(candidatePassword, userPassword) {
-  return bcrypt.compare(candidatePassword, userPassword);
-}
-
-// const comparePass = async (candidatePassword, userPassword)
-// => await bcrypt.compare(candidatePassword, userPassword);
+// eslint-disable-next-line no-return-await
+const comparePass = async (candidatePassword, userPassword) => await bcrypt.compare(candidatePassword, userPassword);
 
 module.exports = {
   encryptPass,

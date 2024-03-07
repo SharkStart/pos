@@ -1,16 +1,16 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
     products: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
+        ref: 'Product',
         required: true,
       },
     ],
@@ -20,13 +20,13 @@ const orderSchema = new mongoose.Schema(
     },
     mesa: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Mesa",
+      ref: 'Mesa',
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-const Order = mongoose.model("Order", orderSchema);
+const Order = mongoose.model('Order', orderSchema);
 
 module.exports = Order;

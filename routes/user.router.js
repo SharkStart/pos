@@ -1,11 +1,27 @@
 const express = require('express');
 const { encryptPass } = require('../middlewares/authMiddleware');
-const UserController = require('../controllers/user.controller');
+const userController = require('../controllers/user.controller');
 
 const router = express.Router();
 
-router.get('/', UserController.getAllUsers);
-router.post('/', encryptPass, UserController.createUser);
+router.get('/', userController.getAllUsers);
+/**
+ * @swagger
+ * /user:
+ *   get:
+ *     summary: Obtiene todos los usuarios
+ *     tags: [Users]
+ *     description: Obtiene el listado de todos los usuarios en formato Json
+ *     responses:
+ *      200:
+ *        content:
+ *           application/json:
+ *             schema:
+ *              type: object
+ *              properties:
+ * */
+
+router.post('/', encryptPass, userController.createUser);
 /**
  * @swagger
  * /user:
@@ -29,6 +45,9 @@ router.post('/', encryptPass, UserController.createUser);
  *               password:
  *                 type: string
  *                 description: Contraseña del usuario
+ *               rol:
+ *                 type: string
+ *                 description: Rol del usuario
  *             required:
  *               - username
  *               - email
@@ -37,6 +56,7 @@ router.post('/', encryptPass, UserController.createUser);
  *               username: "nuevoUsuario"
  *               email: "usuario@ejemplo.com"
  *               password: "ContraseñaSegura123"
+ *               rol: "admin"
  *     responses:
  *       201:
  *         description: Usuario creado exitosamente
@@ -59,5 +79,9 @@ router.post('/', encryptPass, UserController.createUser);
  *       409:
  *         description: El usuario ya existe
  */
+
+router.post('/login', userController.loginUser);
+router.put('/:id', encryptPass, userController.updateUser);
+router.delete('/:id', userController.deleteUser);
 
 module.exports = router;
