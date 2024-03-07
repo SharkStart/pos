@@ -1,9 +1,9 @@
 const express = require('express');
 const tokenJWT = require('../middlewares/jwtMiddleware');
+const orderController = require('../controllers/order.controller');
 
 const router = express.Router();
 
-router.get('/', tokenJWT, )
-
+router.post('/', tokenJWT, orderController.createOrder);
 
 module.exports = router;
