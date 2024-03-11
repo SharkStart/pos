@@ -81,6 +81,52 @@ router.post('/', encryptPass, userController.createUser);
  */
 
 router.post('/login', userController.loginUser);
+/**
+ * @swagger
+ * /user/login:
+ *   post:
+ *     summary: Inicia sesion de un usuario
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Dirección de correo electrónico del usuario
+ *               password:
+ *                 type: string
+ *                 description: Contraseña del usuario
+ *             required:
+ *               - email
+ *               - password
+ *             example:
+ *               email: "usuario@ejemplo.com"
+ *               password: "ContraseñaSegura123"
+ *     responses:
+ *       200:
+ *         description: Usuario Logueado correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Mensaje de éxito
+ *                 token:
+ *                   type: string
+ *                   description: Token JWT
+ *               example:
+ *                 message: "Autorizacion del usuario exitosa"
+ *                 token: "60af924bfc13ae3d5000000b"
+ *       400:
+ *         description: Datos de entrada inválidos
+ */
 router.put('/:id', encryptPass, userController.updateUser);
 router.delete('/:id', userController.deleteUser);
 

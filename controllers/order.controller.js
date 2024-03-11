@@ -47,6 +47,7 @@ const orderController = {
       if (!esRolValido(req.user.rol)) {
         return res.status(403).json({ message: 'No tienes permiso para realizar esta acción' });
       }
+      // la funcion populate reemplaza la referencia ID y trae la infomacion de ese objeto
       const orders = await Order.find({ status: false })
         .populate({ path: 'products', select: 'name description' })
         .populate('user', 'name');
@@ -57,6 +58,44 @@ const orderController = {
       });
     }
   },
+
+  updateOrder: async (req, res) => {
+    try {
+      if (!esRolValido(req.user.rol)) {
+        return res.status(403).json({ message: 'No tienes permiso para realizar esta acción' });
+      }
+      const { id } = req.params;
+      const { status } = req.body;
+      const order = await Order.findByIdAndUpdate(id, { status }, { new: true });
+      res.status(200).json({
+        message: 'Orden actualizada exitosamente',
+        order,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    }
+  },
+
+  deleteOrder: async (req, res) => {
+    try {
+      if (!esRolValido(req.user.rol)) {
+        return res.status(403).json({ message: 'No tienes permiso para realizar esta acción' });
+      }
+      const { id } = req.params;
+      const order = await Order.findByIdAndDelete(id);
+      res.status(200).json({
+        message: 'Orden eliminada exitosamente',
+        order,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    }
+  },
+
 };
 
 module.exports = orderController;

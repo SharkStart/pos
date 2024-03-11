@@ -91,12 +91,17 @@ const userController = {
       const { email, password } = req.body;
       const user = await User.findOne({ email });
       if (user && (await bcrypt.compare(password, user.password))) {
-        const token = jwt.sign({
+        const token = jwt.sign(
+          {
+          // este es el payload
           // eslint-disable-next-line no-underscore-dangle
-          id: user._id,
-          email: user.email,
-          rol: user.rol,
-        }, process.env.JWT_SECRET);
+            id: user._id,
+            email: user.email,
+            rol: user.rol,
+          },
+          process.env.JWT_SECRET,
+          { expiresIn: '8h' },
+        );
         res.status(200).json({ message: 'Authentication successful', token });
       } else {
         res.status(401).json({ message: 'Authentication failed' });

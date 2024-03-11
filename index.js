@@ -12,6 +12,7 @@ const originList = require('./middlewares/cors');
 const userRouter = require('./routes/user.router');
 const productRouter = require('./routes/product.router');
 const orderRouter = require('./routes/order.router');
+const billRotuer = require('./routes/bill.router');
 
 const PORT = process.env.PORT || 3000;
 
@@ -26,6 +27,7 @@ app.use(helmet());
 app.use('/user', userRouter);
 app.use('/product', productRouter);
 app.use('/order', orderRouter);
+app.use('/bill', billRotuer);
 app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 mongoose
