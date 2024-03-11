@@ -24,18 +24,17 @@ app.use(cors(originList(PORT)));
 
 app.use(helmet());
 
-app.use('/user', userRouter);
-app.use('/product', productRouter);
-app.use('/order', orderRouter);
-app.use('/bill', billRotuer);
-app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// Creamos una función para generar el nombre del archivo de log
+const generateLogFileName = () => {
+  const now = new Date();
+  const day = now.getDate().toString().padStart(2, '0');
+  const month = (now.getMonth() + 1).toString().padStart(2, '0');
+  const year = now.getFullYear();
+  return `${day}-${month}-${year}.log`;
+};
 
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch((err) => console.error(err));
-
-const streamLog = rfs.createStream('log.txt', {
+// Configuramos el stream de log con el nombre de archivo generado
+const streamLog = rfs.createStream(generateLogFileName, {
   size: '10M',
   interval: '1d',
   compress: 'gzip',
@@ -43,6 +42,18 @@ const streamLog = rfs.createStream('log.txt', {
 });
 
 app.use(morgan('combined', { stream: streamLog }));
+
+app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.use('/user', userRouter);
+app.use('/product', productRouter);
+app.use('/order', orderRouter);
+app.use('/bill', billRotuer);
+
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log('MongoDB connected'))
+  .catch((err) => console.error(err));
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
