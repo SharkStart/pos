@@ -1,6 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
+const https = require('https');
+const fs = require('fs');
 const rfs = require('rotating-file-stream');
 const swaggerUi = require('swagger-ui-express');
 const mongoose = require('mongoose');
@@ -8,21 +10,29 @@ const morgan = require('morgan');
 const path = require('path');
 const cors = require('cors');
 const swaggerSpec = require('./config/swaggerconfig');
-const originList = require('./middlewares/cors');
+// const originList = require('./middlewares/cors');
 const userRouter = require('./routes/user.router');
 const productRouter = require('./routes/product.router');
 const orderRouter = require('./routes/order.router');
 const billRotuer = require('./routes/bill.router');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 
 const app = express();
 
 app.use(express.json());
 
-app.use(cors(originList(PORT)));
+app.use(cors());
 
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      connectSrc: ["'self'", 'https://pos-udzw.onrender.com'],
+      // Añade otras directivas según sea necesario
+    },
+  },
+}));
 
 // Creamos una función para generar el nombre del archivo de log
 const generateLogFileName = () => {
@@ -43,18 +53,26 @@ const streamLog = rfs.createStream(generateLogFileName, {
 
 app.use(morgan('combined', { stream: streamLog }));
 
-app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/user', userRouter);
 app.use('/product', productRouter);
 app.use('/order', orderRouter);
 app.use('/bill', billRotuer);
-
+app.use((req, res, next) => {
+  console.log('Headers:', req.headers);
+  next();
+});
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.error(err));
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+const sslOptions = {
+  cert: fs.readFileSync(process.env.SSL_CERT_PATH),
+  key: fs.readFileSync(process.env.SSL_KEY_PATH),
+};
+
+https.createServer(sslOptions, app).listen(PORT, () => {
+  console.log(`Servidor HTTPS escuchando en el puerto ${PORT}`);
 });

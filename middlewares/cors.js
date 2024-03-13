@@ -1,3 +1,3 @@
-const originList = (PORT) => ({ origin: `http://localhost:${PORT}` });
+const originList = () => ({ origin: '*' });
 
 module.exports = originList;
