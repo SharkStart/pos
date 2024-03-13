@@ -1,8 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
-const https = require('https');
-const fs = require('fs');
 const rfs = require('rotating-file-stream');
 const swaggerUi = require('swagger-ui-express');
 const mongoose = require('mongoose');
@@ -59,20 +57,12 @@ app.use('/user', userRouter);
 app.use('/product', productRouter);
 app.use('/order', orderRouter);
 app.use('/bill', billRotuer);
-app.use((req, res, next) => {
-  console.log('Headers:', req.headers);
-  next();
-});
+
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.error(err));
 
-const sslOptions = {
-  cert: fs.readFileSync(process.env.SSL_CERT_PATH),
-  key: fs.readFileSync(process.env.SSL_KEY_PATH),
-};
-
-https.createServer(sslOptions, app).listen(PORT, () => {
-  console.log(`Servidor HTTPS escuchando en el puerto ${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
